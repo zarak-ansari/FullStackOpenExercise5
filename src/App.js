@@ -3,6 +3,27 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ errorMessage, color }) => {
+
+  const styles = {
+    color: color,
+    background: "lightgrey",
+    fontSize: 20,
+    borderStyle: "solid",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  }
+
+  if(errorMessage){
+    return (
+      <div style={styles}>
+        {errorMessage}
+      </div>
+    )
+  }
+}
+
 const LoginForm = (props) => {
 
 
@@ -123,11 +144,16 @@ const App = () => {
     setUser(null)
   }
 
+  const displayNotification = (message, color) => {
+    
+  }
+
 
   if(user){
     return(
       <div>
         <h2>blogs</h2>
+        <Notification errorMessage="hello" color="red" />
         <p>
           Logged in user: {user.name}
           <button onClick={logout}>Log Out</button>
@@ -139,7 +165,7 @@ const App = () => {
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
-      </div>    
+      </div>
     )
   } else {
     return(<LoginForm setUser={setUser} />)
