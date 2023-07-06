@@ -16,7 +16,7 @@ const LoginForm = (props) => {
       props.setUser(user)
       setUsername("")
       setPassword("")
-      // window.localStorage.setItem('user', JSON.stringify(user))
+      window.localStorage.setItem('user', JSON.stringify(user))
     } catch (exception) {
       console.log(exception)
     }
@@ -57,11 +57,30 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const loggedInUser = window.localStorage.getItem('user')
+    if(loggedInUser) {
+      const parsedUser = JSON.parse(loggedInUser)
+      setUser(parsedUser)
+      blogService.setToken(parsedUser.token)
+    }
+  }, [])
+
+  const logout = () => {
+    blogService.setToken(null)
+    window.localStorage.removeItem('user')
+    setUser(null)
+  }
+
+  
   if(user){
     return(
       <div>
         <h2>blogs</h2>
-        <p>Logged in user: {user.name}</p>
+        <p>
+          Logged in user: {user.name}
+          <button onClick={logout}>Log Out</button>
+        </p>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
