@@ -3,7 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-const Notification = ({ errorMessage, color }) => {
+const Notification = ({ message, color }) => {
 
   const styles = {
     color: color,
@@ -15,10 +15,10 @@ const Notification = ({ errorMessage, color }) => {
     marginBottom: 10,
   }
 
-  if(errorMessage){
+  if(message){
     return (
       <div style={styles}>
-        {errorMessage}
+        {message}
       </div>
     )
   }
@@ -37,9 +37,11 @@ const LoginForm = (props) => {
       props.setUser(user)
       setUsername("")
       setPassword("")
+      blogService.setToken(user.token)
       window.localStorage.setItem('user', JSON.stringify(user))
+      props.displayNotification('Successfully logged in', 'green')
     } catch (exception) {
-      console.log(exception)
+      props.displayNotification('Invalid username or password', 'red')
     }
   }
 
@@ -78,12 +80,15 @@ const NewBlogForm = (props) => {
     event.preventDefault()
     const newBlog = { title, author, url, }
     try {
+      console.log(window.localStorage.getItem('user'))
       const responseBlog = await blogService.createNewBlog(newBlog)
       props.setBlogs(props.blogs.concat(responseBlog))
       setTitle('')
       setAuthor('')
       setUrl('')
+      props.displayNotification(`Added new blog ${responseBlog.title} by ${responseBlog.author}`, 'green')
     } catch (exception) {
+      props.displayNotification('Could not add new blog', 'red')
       console.log(exception)
     }
   }
@@ -122,12 +127,8 @@ const NewBlogForm = (props) => {
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationColor, setNotificationColor] = useState(null)
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('user')
@@ -138,6 +139,13 @@ const App = () => {
     }
   }, [])
 
+  useEffect(() => {
+    blogService.getAll().then(blogs =>
+      setBlogs( blogs )
+    )
+  }, [])
+
+
   const logout = () => {
     blogService.setToken(null)
     window.localStorage.removeItem('user')
@@ -145,7 +153,12 @@ const App = () => {
   }
 
   const displayNotification = (message, color) => {
-    
+    setNotificationMessage(message)
+    setNotificationColor(color)
+    setTimeout(() => {
+      setNotificationMessage(null)
+      setNotificationColor(null)
+    }, 5000)
   }
 
 
@@ -153,7 +166,7 @@ const App = () => {
     return(
       <div>
         <h2>blogs</h2>
-        <Notification errorMessage="hello" color="red" />
+        <Notification message={notificationMessage} color={notificationColor} />
         <p>
           Logged in user: {user.name}
           <button onClick={logout}>Log Out</button>
@@ -161,6 +174,7 @@ const App = () => {
         <NewBlogForm 
           blogs={blogs}
           setBlogs={setBlogs}
+          displayNotification={displayNotification}
         />
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
@@ -168,7 +182,15 @@ const App = () => {
       </div>
     )
   } else {
-    return(<LoginForm setUser={setUser} />)
+    return (
+      <div>
+        <h2>Log in</h2>
+        <Notification message={notificationMessage} color={notificationColor} />
+        <LoginForm 
+          setUser={setUser} 
+          displayNotification={displayNotification}
+        />
+      </div>)
   }
 }
 
