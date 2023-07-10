@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import blogService from './services/blogs'
 
@@ -13,6 +13,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationColor, setNotificationColor] = useState(null)
+
+  const newBlogFormVisibilityRef = useRef()
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('user')
@@ -45,6 +47,18 @@ const App = () => {
     }, 5000)
   }
 
+  const addNewBlog = async (newBlog) => {
+    try {
+      newBlogFormVisibilityRef.current.toggleVisibility()
+      const responseBlog = await blogService.createNewBlog(newBlog)
+      setBlogs(blogs.concat(responseBlog))
+      displayNotification(`Added new blog ${responseBlog.title} by ${responseBlog.author}`, 'green')
+    } catch (exception) {
+      displayNotification('Could not add new blog', 'red')
+      console.log(exception)
+    }
+  }
+
   if(user){
     return(
       <div>
@@ -55,11 +69,9 @@ const App = () => {
           <button onClick={logout}>Log Out</button>
         </p>
         <h2>Create a new Blog</h2>
-        <Toggleable>
+        <Toggleable buttonLabel="New Blog" ref={newBlogFormVisibilityRef}>
           <NewBlogForm
-            blogs={blogs}
-            setBlogs={setBlogs}
-            displayNotification={displayNotification}
+            addNewBlog={addNewBlog}
           />
         </Toggleable>
 

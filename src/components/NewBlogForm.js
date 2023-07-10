@@ -1,7 +1,5 @@
 import { useState } from 'react'
 
-import blogService from '../services/blogs'
-
 const NewBlogForm = (props) => {
 
     const [title, setTitle] = useState('')
@@ -10,17 +8,12 @@ const NewBlogForm = (props) => {
     
     const createNewBlog = async (event) =>{
       event.preventDefault()
-      const newBlog = { title, author, url, }
-      try {
-        console.log(window.localStorage.getItem('user'))
-        const responseBlog = await blogService.createNewBlog(newBlog)
-        props.setBlogs(props.blogs.concat(responseBlog))
+      try{
+        props.addNewBlog({title, author, url, })
         setTitle('')
         setAuthor('')
         setUrl('')
-        props.displayNotification(`Added new blog ${responseBlog.title} by ${responseBlog.author}`, 'green')
       } catch (exception) {
-        props.displayNotification('Could not add new blog', 'red')
         console.log(exception)
       }
     }
