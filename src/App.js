@@ -26,8 +26,10 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService.getAll().then(blogs => {
+        const sortedBlogs = blogs.sort((a,b) => (a.likes - b.likes))
+        setBlogs(sortedBlogs)
+      }
     )
   }, [])
 
@@ -70,6 +72,14 @@ const App = () => {
     setBlogs(newBlogs)
   }
 
+  const removeBlog = async (blogId) => {
+    if(window.confirm("Do you really want to delete the blog?")) {
+      await blogService.removeBlog(blogId)
+      const newBlogs = blogs.filter(blog => blog.id !== blogId)
+      setBlogs(newBlogs)
+    }
+  }
+
   if(user){
     return(
       <div>
@@ -86,11 +96,13 @@ const App = () => {
           />
         </Toggleable>
 
-          {blogs.map(blog =>
+          {blogs.sort((a,b) => (b.likes - a.likes)).map(blog =>
             <Blog 
               key={blog.id}
               blog={blog}
               incrementLikesOfBlog={incrementLikesOfBlog}
+              loggedInUserId={user.id}
+              removeBlog={removeBlog}
             />
           )}
       </div>
