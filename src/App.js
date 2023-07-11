@@ -59,6 +59,17 @@ const App = () => {
     }
   }
 
+  const incrementLikesOfBlog = (blogId) => {
+    const newBlogs = blogs.map(blog => {
+      if(blog.id === blogId){
+        return {...blog, likes:blog.likes + 1}
+      } else {
+        return blog
+      }
+    })
+    setBlogs(newBlogs)
+  }
+
   if(user){
     return(
       <div>
@@ -76,7 +87,11 @@ const App = () => {
         </Toggleable>
 
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog 
+              key={blog.id}
+              blog={blog}
+              incrementLikesOfBlog={incrementLikesOfBlog}
+            />
           )}
       </div>
     )
