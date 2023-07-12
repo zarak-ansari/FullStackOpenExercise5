@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import blogService from '../services/blogs'
 
 const blogStyle = {
@@ -39,5 +40,12 @@ const Blog = (props) => {
   )
 }
 
+Blog.prototypes = {
+  key : PropTypes.string.isRequired,
+  blog : PropTypes.object.isRequired,
+  incrementLikesOfBlog : PropTypes.func.isRequired,
+  loggedInUsername : PropTypes.string.isRequired,
+  removeBlog : PropTypes.func.isRequired
+}
 
 export default Blog
