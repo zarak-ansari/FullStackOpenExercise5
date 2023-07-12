@@ -27,9 +27,9 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-        const sortedBlogs = blogs.sort((a,b) => (a.likes - b.likes))
-        setBlogs(sortedBlogs)
-      }
+      const sortedBlogs = blogs.sort((a,b) => (a.likes - b.likes))
+      setBlogs(sortedBlogs)
+    }
     )
   }, [])
 
@@ -64,7 +64,7 @@ const App = () => {
   const incrementLikesOfBlog = (blogId) => {
     const newBlogs = blogs.map(blog => {
       if(blog.id === blogId){
-        return {...blog, likes:blog.likes + 1}
+        return { ...blog, likes:blog.likes + 1 }
       } else {
         return blog
       }
@@ -73,7 +73,7 @@ const App = () => {
   }
 
   const removeBlog = async (blogId) => {
-    if(window.confirm("Do you really want to delete the blog?")) {
+    if(window.confirm('Do you really want to delete the blog?')) {
       await blogService.removeBlog(blogId)
       const newBlogs = blogs.filter(blog => blog.id !== blogId)
       setBlogs(newBlogs)
@@ -96,15 +96,15 @@ const App = () => {
           />
         </Toggleable>
 
-          {blogs.sort((a,b) => (b.likes - a.likes)).map(blog =>
-            <Blog 
-              key={blog.id}
-              blog={blog}
-              incrementLikesOfBlog={incrementLikesOfBlog}
-              loggedInUsername={user.username}
-              removeBlog={removeBlog}
-            />
-          )}
+        {blogs.sort((a,b) => (b.likes - a.likes)).map(blog =>
+          <Blog
+            key={blog.id}
+            blog={blog}
+            incrementLikesOfBlog={incrementLikesOfBlog}
+            loggedInUsername={user.username}
+            removeBlog={removeBlog}
+          />
+        )}
       </div>
     )
   } else {
@@ -112,8 +112,8 @@ const App = () => {
       <div>
         <h2>Log in</h2>
         <Notification message={notificationMessage} color={notificationColor} />
-        <LoginForm 
-          setUser={setUser} 
+        <LoginForm
+          setUser={setUser}
           displayNotification={displayNotification}
         />
       </div>)

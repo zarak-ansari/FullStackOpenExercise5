@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
 const blogStyle = {
@@ -16,8 +16,8 @@ const Blog = (props) => {
   const toggleVisibility = () => setDetailsVisible(!detailsVisible)
 
   const incrementLikes = async () => {
-    
-    const updatedBlog = {...blog}
+
+    const updatedBlog = { ...blog }
     updatedBlog.user = blog.user.id
     updatedBlog.likes = blog.likes + 1
     delete updatedBlog.id
@@ -26,17 +26,17 @@ const Blog = (props) => {
   }
 
   return (
-      <div style={blogStyle}>
-        <p>{blog.title} - {blog.author} <button onClick={toggleVisibility}>{ detailsVisible ? 'Hide' : 'Show' }</button></p>
-        {detailsVisible && 
+    <div style={blogStyle}>
+      <p>{blog.title} - {blog.author} <button onClick={toggleVisibility}>{ detailsVisible ? 'Hide' : 'Show' }</button></p>
+      {detailsVisible &&
         (<div>
           <p>{blog.url}</p>
           <p>likes {blog.likes} <button onClick={incrementLikes}>like</button></p>
           <p>{blog.user.name}</p>
           {(blog.user.username === props.loggedInUsername) && (<button onClick={() => props.removeBlog(blog.id)}>Remove</button>)}
         </div>)}
-      </div>  
-    )
+    </div>
+  )
 }
 
 
