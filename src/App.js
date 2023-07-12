@@ -80,7 +80,7 @@ const App = () => {
     }
   }
 
-  if(user){
+  if (user) {
     return(
       <div>
         <h2>blogs</h2>
@@ -101,7 +101,7 @@ const App = () => {
               key={blog.id}
               blog={blog}
               incrementLikesOfBlog={incrementLikesOfBlog}
-              loggedInUserId={user.id}
+              loggedInUsername={user.username}
               removeBlog={removeBlog}
             />
           )}
