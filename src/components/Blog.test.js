@@ -55,10 +55,11 @@ describe('<Blog />', () => {
 describe('<Blog /> after clicking show button', () => {
 
   let renderedBlog
-
-  beforeAll( async () => {
-    renderedBlog = render(<Blog blog={blog} />).container
-    const user = userEvent.setup()
+  const incrementLikesMock = jest.fn()
+  let user
+  beforeEach( async () => {
+    renderedBlog = render(<Blog blog={blog} incrementLikesOfBlog={incrementLikesMock} />).container
+    user = userEvent.setup()
     const button = screen.getByText('Show')
     await user.click(button)
   })
@@ -78,4 +79,10 @@ describe('<Blog /> after clicking show button', () => {
     expect(urlElementByText).toBeDefined()
   })
 
+  test('clicking like button twice calls function twice', async () => {
+    const button = renderedBlog.querySelector('.likeButton')
+    await user.click(button)
+    await user.click(button)
+    expect(incrementLikesMock.mock.calls).toHaveLength(2)
+  })
 })

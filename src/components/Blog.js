@@ -30,7 +30,7 @@ const Blog = (props) => {
       {detailsVisible &&
         (<div>
           <p className="blogUrl">{blog.url}</p>
-          <p className="blogLikes">likes {blog.likes} <button onClick={incrementLikes}>like</button></p>
+          <p className="blogLikes">likes {blog.likes} <button onClick={incrementLikes} className='likeButton'>like</button></p>
           <p className="blogUsername">{blog.user.name}</p>
           {(blog.user.username === props.loggedInUsername) && (<button onClick={() => props.removeBlog(blog.id)}>Remove</button>)}
         </div>)}
