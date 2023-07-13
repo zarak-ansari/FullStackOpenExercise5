@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import blogService from '../services/blogs'
 
 const blogStyle = {
   paddingTop: 10,
@@ -16,14 +15,13 @@ const Blog = (props) => {
 
   const toggleVisibility = () => setDetailsVisible(!detailsVisible)
 
-  const incrementLikes = async () => {
+  const incrementLikes = () => {
 
     const updatedBlog = { ...blog }
     updatedBlog.user = blog.user.id
     updatedBlog.likes = blog.likes + 1
     delete updatedBlog.id
-    await blogService.updateBlog(updatedBlog, blog.id)
-    props.incrementLikesOfBlog(blog.id)
+    props.incrementLikesOfBlog(blog.id, updatedBlog)
   }
 
   return (

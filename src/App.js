@@ -61,7 +61,8 @@ const App = () => {
     }
   }
 
-  const incrementLikesOfBlog = (blogId) => {
+  const incrementLikesOfBlog = async (blogId, updatedBlog) => {
+    await blogService.updateBlog(updatedBlog, blogId)
     const newBlogs = blogs.map(blog => {
       if(blog.id === blogId){
         return { ...blog, likes:blog.likes + 1 }
