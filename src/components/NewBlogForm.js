@@ -23,6 +23,7 @@ const NewBlogForm = (props) => {
       <form onSubmit={createNewBlog}>
         <label htmlFor='title'>Title</label>
         <input
+          id='title'
           name='title'
           type='text'
           value={title}
@@ -30,6 +31,7 @@ const NewBlogForm = (props) => {
         />
         <label htmlFor='author'>Author</label>
         <input
+          id='author'
           name='author'
           type='text'
           value={author}
@@ -37,6 +39,7 @@ const NewBlogForm = (props) => {
         />
         <label htmlFor='url'>URL</label>
         <input
+          id='url'
           name='url'
           type='text'
           value={url}
