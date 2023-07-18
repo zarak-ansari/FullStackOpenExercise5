@@ -25,14 +25,14 @@ const Blog = (props) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       <p className="blogTitleAndAuthor">{blog.title} - {blog.author} <button onClick={toggleVisibility}>{ detailsVisible ? 'Hide' : 'Show' }</button></p>
       {detailsVisible &&
-        (<div>
+        (<div className='expandedBlog'>
           <p className="blogUrl">{blog.url}</p>
           <p className="blogLikes">likes {blog.likes} <button onClick={incrementLikes} className='likeButton'>like</button></p>
           <p className="blogUsername">{blog.user.name}</p>
-          {(blog.user.username === props.loggedInUsername) && (<button onClick={() => props.removeBlog(blog.id)}>Remove</button>)}
+          {(blog.user.username === props.loggedInUsername) && (<button className='removeBlogButton' onClick={() => props.removeBlog(blog.id)}>Remove</button>)}
         </div>)}
     </div>
   )
