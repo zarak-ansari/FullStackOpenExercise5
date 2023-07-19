@@ -1,18 +1,26 @@
+const testUsers = [
+  {
+    name: 'test-name0',
+    username: 'test-username0',
+    password: 'test-password0'
+  },
+  {
+    name: 'test-name1',
+    username: 'test-username1',
+    password: 'test-password1'
+  }
+]
+
 describe('Blog app', function () {
 
-  beforeEach(function (){
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')
-    const user = {
-      name: 'test-name',
-      username: 'test-username12345',
-      password: 'test-password'
-    }
-    cy.request('POST', 'http:localhost:3003/api/users', user)
+  before(function (){
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
+    testUsers.forEach(user => cy.createUser(user))
   })
 
   describe('Login related tests', function() {
     beforeEach(function(){
-      cy.visit('http://localhost:3000')
+      cy.visit('')
     })
 
     it('Login form is shown', function () {
@@ -21,65 +29,78 @@ describe('Blog app', function () {
     })
 
     it('log in succeeds with right credentials', function() {
-      cy.get('#username').type('test-username12345')
-      cy.get('#password').type('test-password')
+      cy.get('#username').type(testUsers[0].username)
+      cy.get('#password').type(testUsers[0].password)
       cy.get('#loginSubmit').click()
 
-      cy.contains('Logged in user: test-name')
+      cy.contains(`Logged in user: ${testUsers[0].name}`)
     })
 
     it('login fails with wrong credentials', function() {
       cy.get('#username').type('test-username12345')
-      cy.get('#password').type('test-password')
+      cy.get('#password').type('test-wrong-password')
       cy.get('#loginSubmit').click()
 
       // Check that labels for username and password are still visible
-      cy.contains('Username')
-      cy.contains('Password')
+      cy.contains('Login Failed')
     })
 
   })
 
-  describe('When logged in', function() {
-    beforeEach(function(){
-      cy.visit('http://localhost:3000')
-      cy.get('#username').type('test-username12345')
-      cy.get('#password').type('test-password')
-      cy.get('#loginSubmit').click()
+  describe('When users and blogs have been added to backend', function() {
+    before(function(){
+      cy.visit('')
+      testUsers.forEach(user => {
+        cy.login(user)
+          .then(() => {
+            for(var i=0; i<5; i++){
+              const blog = {
+                title: `${user.username} Test Blog Title ${i} `,
+                author: `${user.username} Test Blog Author ${i}`,
+                url: `${user.username}testUrl${i}`
+              }
+              cy.createBlog(blog)
+            }
+          })
+          .then(() => cy.contains('Log Out').click())
+      })
     })
 
-    it('can create new blogs', function() {
-      cy.contains('New Blog').click()
-      cy.get('#title').type('Test Blog Title')
-      cy.get('#author').type('Test Blog Author')
-      cy.get('#url').type('Test Blog URL')
-      cy.contains('Submit').click()
-
-      cy.contains('Added new blog Test Blog Title by Test Blog Author')
-    })
-
-    describe('when blogs are created by the logged in user', function() {
-      beforeEach(function() {
-        for(var i = 0; i < 5; i++){
-          createTestBlog(`Test Title ${i}`, `Test Author ${i}`, `Test URL ${i}`)
-        }
+    describe('when first user is logged in', function() {
+      beforeEach(function(){
+        cy.login(testUsers[0])
       })
 
-      it('can click like button for blog number 3', function() {
-        cy.contains('Test Title 3').as('currentBlog')
+      const blogForCurrentTest = {
+        title:'Title Added From UI',
+        author: 'Author Added From UI',
+        url:'URL Added From UI'
+      }
+
+      it('can create new blogs', function() {
+        cy.contains('New Blog').click()
+        cy.get('#title').type(blogForCurrentTest.title)
+        cy.get('#author').type(blogForCurrentTest.author)
+        cy.get('#url').type(blogForCurrentTest.url)
+        cy.contains('Submit').click()
+        cy.contains(`Added new blog ${blogForCurrentTest.title} by ${blogForCurrentTest.author}`)
+      })
+
+      it('can like a blog', function() {
+        cy.contains(blogForCurrentTest.title).as('currentBlog')
         cy.get('@currentBlog').contains('Show').click()
         cy.get('@currentBlog').get('.likeButton').click()
-        cy.get('@currentBlog').get('.blogLikes').should('contain', 'likes 1')
+        cy.get('@currentBlog').get('.blogLikes').should('contain', '1')
+        cy.get('@currentBlog').contains('Hide').click()
+      })
+
+      it('can delete a specified blog', function() {
+
+        cy.contains(blogForCurrentTest.title).as('currentBlog')
+        cy.get('@currentBlog').contains('Show').click()
+        cy.get('@currentBlog').get('.removeBlogButton').click()
       })
     })
   })
 
 })
-
-function createTestBlog(title, author, url) {
-  cy.contains('New Blog').click()
-  cy.get('#title').type(title)
-  cy.get('#author').type(author)
-  cy.get('#url').type(url)
-  cy.contains('Submit').click()
-}

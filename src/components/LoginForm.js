@@ -17,7 +17,7 @@ const LoginForm = (props) => {
       window.localStorage.setItem('user', JSON.stringify(user))
       props.displayNotification('Successfully logged in', 'green')
     } catch (exception) {
-      props.displayNotification('Invalid username or password', 'red')
+      props.displayNotification('Login Failed', 'red')
     }
   }
 
