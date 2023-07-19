@@ -106,6 +106,30 @@ describe('Blog app', function () {
         cy.get('@currentBlog').contains('Show').click()
         cy.get('@currentBlog').find('.removeBlogButton').should('not.exist')
       })
+
+      it('can see blogs with most likes on top', function() {
+        cy.contains(`${testUsers[0].username} Test Blog Title 2`).parent().as('currentBlog1')
+        cy.get('@currentBlog1').contains('Show').click()
+        cy.get('@currentBlog1').find('.likeButton').click()
+        cy.get('@currentBlog1').get('.blogLikes').contains('1')
+        cy.get('@currentBlog1').find('.likeButton').click()
+        cy.get('@currentBlog1').get('.blogLikes').contains('2')
+        cy.get('@currentBlog1').find('.likeButton').click()
+        cy.get('@currentBlog1').get('.blogLikes').contains('3')
+        cy.get('@currentBlog1').find('.likeButton').click()
+        cy.get('@currentBlog1').get('.blogLikes').contains('4')
+
+        cy.contains(`${testUsers[1].username} Test Blog Title 1`).parent().as('currentBlog2')
+        cy.get('@currentBlog2').contains('Show').click()
+        cy.get('@currentBlog2').find('.likeButton').click()
+        cy.get('@currentBlog2').get('.blogLikes').contains('1')
+        cy.get('@currentBlog2').find('.likeButton').click()
+        cy.get('@currentBlog2').get('.blogLikes').contains('2')
+
+        cy.get('.blog').eq(0).should('contain', `${testUsers[0].username} Test Blog Title 2`)
+        cy.get('.blog').eq(1).should('contain', `${testUsers[1].username} Test Blog Title 1`)
+
+      })
     })
   })
 
