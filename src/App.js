@@ -75,9 +75,9 @@ const App = () => {
 
   const removeBlog = async (blogId) => {
     if(window.confirm('Do you really want to delete the blog?')) {
-      await blogService.removeBlog(blogId)
-      const newBlogs = blogs.filter(blog => blog.id !== blogId)
+      const newBlogs = blogs.filter(blog => (blog.id !== blogId))
       setBlogs(newBlogs)
+      await blogService.removeBlog(blogId)
     }
   }
 
@@ -97,15 +97,17 @@ const App = () => {
           />
         </Toggleable>
 
-        {blogs.sort((a,b) => (b.likes - a.likes)).map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            incrementLikesOfBlog={incrementLikesOfBlog}
-            loggedInUsername={user.username}
-            removeBlog={removeBlog}
-          />
-        )}
+        <div id='blogList'>
+          {blogs.sort((a,b) => (b.likes - a.likes)).map(blog =>
+            <Blog
+              key={blog.id}
+              blog={blog}
+              incrementLikesOfBlog={incrementLikesOfBlog}
+              loggedInUsername={user.username}
+              removeBlog={removeBlog}
+            />
+          )}
+        </div>
       </div>
     )
   } else {

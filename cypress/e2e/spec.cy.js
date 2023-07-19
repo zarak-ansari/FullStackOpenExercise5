@@ -55,7 +55,7 @@ describe('Blog app', function () {
           .then(() => {
             for(var i=0; i<5; i++){
               const blog = {
-                title: `${user.username} Test Blog Title ${i} `,
+                title: `${user.username} Test Blog Title ${i}`,
                 author: `${user.username} Test Blog Author ${i}`,
                 url: `${user.username}testUrl${i}`
               }
@@ -87,7 +87,7 @@ describe('Blog app', function () {
       })
 
       it('can like a blog', function() {
-        cy.contains(blogForCurrentTest.title).as('currentBlog')
+        cy.contains(blogForCurrentTest.title).parent().as('currentBlog')
         cy.get('@currentBlog').contains('Show').click()
         cy.get('@currentBlog').get('.likeButton').click()
         cy.get('@currentBlog').get('.blogLikes').should('contain', '1')
@@ -95,10 +95,16 @@ describe('Blog app', function () {
       })
 
       it('can delete a specified blog', function() {
-
-        cy.contains(blogForCurrentTest.title).as('currentBlog')
+        cy.contains(blogForCurrentTest.title).parent().as('currentBlog')
         cy.get('@currentBlog').contains('Show').click()
         cy.get('@currentBlog').get('.removeBlogButton').click()
+        cy.contains(blogForCurrentTest.title).should('not.exist')
+      })
+
+      it('cannot see delete button for blogs added by other users', function() {
+        cy.contains(`${testUsers[1].username} Test Blog Title 0`).parent().as('currentBlog')
+        cy.get('@currentBlog').contains('Show').click()
+        cy.get('@currentBlog').find('.removeBlogButton').should('not.exist')
       })
     })
   })

@@ -24,15 +24,20 @@ const Blog = (props) => {
     props.incrementLikesOfBlog(blog.id, updatedBlog)
   }
 
+  const removeBlog = (event) => {
+    event.preventDefault()
+    props.removeBlog(blog.id)
+  }
+
   return (
-    <div className='blog' style={blogStyle}>
+    <div className='blog' id={blog.id} style={blogStyle}>
       <p className="blogTitleAndAuthor">{blog.title} - {blog.author} <button onClick={toggleVisibility}>{ detailsVisible ? 'Hide' : 'Show' }</button></p>
       {detailsVisible &&
         (<div className='expandedBlog'>
           <p className="blogUrl">{blog.url}</p>
           <p className="blogLikes">likes {blog.likes} <button onClick={incrementLikes} className='likeButton'>like</button></p>
           <p className="blogUsername">{blog.user.name}</p>
-          {(blog.user.username === props.loggedInUsername) && (<button className='removeBlogButton' onClick={() => props.removeBlog(blog.id)}>Remove</button>)}
+          {(blog.user.username === props.loggedInUsername) && (<button className='removeBlogButton' onClick={removeBlog}>Remove</button>)}
         </div>)}
     </div>
   )
